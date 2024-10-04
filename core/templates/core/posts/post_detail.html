@@ -1,0 +1,46 @@
+{% extends "core/base.html" %}
+{% block title %}{{ post.title }} - Forum{% endblock %}
+
+{% block content %}
+<article>
+  <h1>
+    {% if post.link %}
+      <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer">{{ post.title }}</a>
+    {% else %}
+      {{ post.title }}
+    {% endif %}
+  </h1>
+  {% if post.content %}
+    <p>{{ post.content }}</p>
+  {% endif %}
+  <small><a href="{% url 'profile' post.author.id %}">{{ post.author }}</a> on {{ post.created_at|date:"Y-m-d H:i" }}</small>
+</article>
+
+<section>
+  <!-- extract this into a separate template -->
+  <h2>Comments</h2>
+  {% if post.comment_set.all %}
+    {% for comment in post.comment_set.all %}
+      <div class="comment">
+        <p>{{ comment.content }}</p>
+        <small><a href="{% url 'profile' comment.author.id %}">{{ comment.author }}</a> on {{ comment.created_at|date:"Y-m-d H:i" }}</small>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>No comments yet.</p>
+  {% endif %}
+</section>
+
+{% if user.is_authenticated %}
+  <section>
+    <h2>Add a comment</h2>
+    <form method="post" action="{% url 'comment_create' post.id %}">
+      {% csrf_token %}
+      <textarea name="content" required></textarea>
+      <button type="submit">Submit Comment</button>
+    </form>
+  </section>
+{% else %}
+  <p><a href="{% url 'login' %}">Login to comment.</a></p>
+{% endif %}
+{% endblock %}

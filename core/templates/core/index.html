@@ -4,7 +4,11 @@
 <ol>
   {% for post in posts %}
   <li>
-    <a href="{{ post.url }}" target="_blank" rel="noopener noreferrer">{{ post.title }}</a>
+    <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer">{{ post.title }}</a>
+    <br>
+    <small>
+      <a href="{% url 'post_detail' post.id %}">{{ post.comment_count }} comment{{ post.comment_count|pluralize }}</a>
+    </small>
   </li>
   {% endfor %}
 </ol>

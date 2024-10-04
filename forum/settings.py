@@ -30,19 +30,18 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-TIME_ZONE = "America/New_York"
-
 INSTALLED_APPS = [
     # core
     "core.apps.CoreConfig",
     # api
     # 'api.apps.ApiConfig',
+    # third-party
     # built-in
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
-    "django.contrib.sessions",
     "django.contrib.messages",
+    "django.contrib.sessions",
     "django.contrib.staticfiles",
 ]
 
@@ -116,7 +115,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "America/New_York"
 
 USE_I18N = True
 
@@ -132,3 +131,8 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# IPs
+INTERNAL_IPS = [
+    "127.0.0.1",
+]

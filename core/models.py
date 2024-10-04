@@ -1,16 +1,25 @@
 # TODO: https://docs.djangoproject.com/en/5.1/topics/auth/customizing/
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import CheckConstraint, Q
 
 
 class Post(models.Model):
-    title = models.CharField(max_length=200)
-    link = models.URLField(blank=True, unique=True)
+    title = models.CharField(max_length=200, blank=True)
+    link = models.URLField(blank=True)
     content = models.TextField(blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def clean(self):
+        if not self.link and not self.content:
+            raise ValidationError("At least one of link or content must be provided")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
