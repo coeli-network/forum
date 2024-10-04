@@ -1,12 +1,13 @@
-from django.db import models
-
 # TODO: https://docs.djangoproject.com/en/5.1/topics/auth/customizing/
 from django.contrib.auth.models import User
+from django.db import models
+from django.db.models import CheckConstraint, Q
 
 
 class Post(models.Model):
     title = models.CharField(max_length=200)
-    content = models.TextField()
+    link = models.URLField(blank=True, unique=True)
+    content = models.TextField(blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

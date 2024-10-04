@@ -1,0 +1,9 @@
+{% extends "core/base.html" %}
+{% block title %}Submit - Forum{% endblock %}
+{% block content %}
+<form method="post" action="{% url 'submit' %}">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit">You must submit!</button>
+</form>
+{% endblock %}

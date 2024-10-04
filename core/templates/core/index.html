@@ -1,0 +1,11 @@
+{% extends "core/base.html" %} 
+{% block title %}Forum{% endblock %}
+{% block content %}
+<ol>
+  {% for post in posts %}
+  <li>
+    <a href="{{ post.url }}" target="_blank" rel="noopener noreferrer">{{ post.title }}</a>
+  </li>
+  {% endfor %}
+</ol>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="{% static 'css/pico.classless.min.css' %}" />
+    <script src="{% static 'js/htmx.min.js' %}"></script>
+    <title>{% block title %} - Forum {% endblock %}</title>
+    <meta name="description" content="Discuss." />
+  </head>
+  <body>
+    <header>
+      <hgroup>
+        <nav>
+          <ul>
+            <li><a href="{% url 'index' %}" style="text-decoration: none; color: inherit;"><strong>Forum</strong></a></li>
+          </ul>
+          <ul>
+            <li><a href="#">New</a></li>
+            <li><a href="{% url 'submit' %}">Submit</a></li>
+            <li><a href="#">Login</a></li>
+          </ul>
+        </nav>
+      </hgroup>
+    </header>
+    <main>{% block content %}{% endblock %}</main>
+  </body>
+</html>
