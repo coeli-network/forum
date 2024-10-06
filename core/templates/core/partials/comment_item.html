@@ -1,9 +1,7 @@
 <div class="comment-item">
-    <div class="comment-content">
-        {{ comment.content|linebreaks }}
-    </div>
-    <div class="comment-meta">
-        <a href="{% url 'user_detail' comment.author.id %}">{{ comment.author.username }}</a> | 
-        {{ comment.created_at|date:"M d, Y" }}
-    </div>
+  <div class="comment-content">{{ comment.content|linebreaks }}</div>
+  <div class="comment-meta">
+    <a href="{% url 'user_detail' comment.author.id %}">{{ comment.author.username }}</a> |
+    {{ comment.created_at|date:"M d, Y" }}
+  </div>
 </div>

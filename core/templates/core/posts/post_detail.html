@@ -1,43 +1,36 @@
 {% extends 'core/base.html' %}
-
 {% block content %}
-<article class="mb-3">
+  <article class="mb-3">
     <h1 class="mb-1">
-        {% if post.link %}
-            <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer">{{ post.title }}</a>
-        {% else %}
-            {{ post.title }}
-        {% endif %}
+      {% if post.link %}
+        <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer">{{ post.title }}</a>
+      {% else %}
+        {{ post.title }}
+      {% endif %}
     </h1>
     <p class="post-meta mb-2">
-        <a href="{% url 'user_detail' post.author.id %}">{{ post.author.username }}</a> | 
-        {{ post.created_at|date:"M d, Y" }}
-        {% if post.link %}
-            | <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer">{{ post.link }}</a>
-        {% endif %}
+      <a href="{% url 'user_detail' post.author.id %}">{{ post.author.username }}</a> |
+      {{ post.created_at|date:"M d, Y" }}
+      {% if post.link %}| <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer">{{ post.link }}</a>{% endif %}
     </p>
-    <div class="post-content">
-        {{ post.content|linebreaks }}
-    </div>
-</article>
-
-<section id="comments" class="comment-list">
+    <div class="post-content">{{ post.content|linebreaks }}</div>
+  </article>
+  <section id="comments" class="comment-list">
     <h2 class="mb-2">Comments</h2>
-    <div id="comment-list">
-        {% include 'core/partials/comment_list.html' with comments=post.comment_set.all %}
-    </div>
-</section>
-
-{% if user.is_authenticated %}
+    <div id="comment-list">{% include 'core/partials/comment_list.html' with comments=post.comment_set.all %}</div>
+  </section>
+  {% if user.is_authenticated %}
     <form hx-post="{% url 'comment_create' post.id %}"
           hx-target="#comment-list"
           hx-swap="innerHTML"
           hx-on::after-request="this.reset()">
-        {% csrf_token %}
-        {{ comment_form }}
-        <button type="submit">Add Comment</button>
+      {% csrf_token %}
+      {{ comment_form }}
+      <button type="submit">Add Comment</button>
     </form>
-{% else %}
-    <p>Please <a href="{% url 'login' %}">log in</a> to add a comment.</p>
-{% endif %}
+  {% else %}
+    <p>
+      Please <a href="{% url 'login' %}">log in</a> to add a comment.
+    </p>
+  {% endif %}
 {% endblock %}

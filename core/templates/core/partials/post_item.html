@@ -1,16 +1,16 @@
 <div class="post-item" id="post-{{ post.id }}">
-    <div class="post-title">
-        {% if post.link %}
-            <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer">{{ post.title }}</a>
-        {% else %}
-            <a href="{% url 'post_detail' post.id %}">{{ post.title }}</a>
-        {% endif %}
-    </div>
-    <div class="post-meta">
-        <a href="{% url 'user_detail' post.author.id %}">{{ post.author.username }}</a> | 
-        {{ post.created_at|date:"M d, Y" }} | 
-        <a href="{% url 'post_detail' post.id %}">
-            {{ post.comment_set.count }} comment{{ post.comment_set.count|pluralize }}
-        </a>
-    </div>
+  <div class="post-title">
+    {% if post.link %}
+      <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer">{{ post.title }}</a>
+    {% else %}
+      <a href="{% url 'post_detail' post.id %}">{{ post.title }}</a>
+    {% endif %}
+  </div>
+  <div class="post-meta">
+    <a href="{% url 'user_detail' post.author.id %}">{{ post.author.username }}</a> |
+    {{ post.created_at|date:"M d, Y" }} |
+    <a href="{% url 'post_detail' post.id %}">
+      {{ post.comment_set.count }} comment{{ post.comment_set.count|pluralize }}
+    </a>
+  </div>
 </div>

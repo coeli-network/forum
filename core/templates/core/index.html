@@ -1,8 +1,5 @@
 {% extends 'core/base.html' %}
-
 {% block content %}
-<h1 class="mb-4">Recent Posts</h1>
-<div id="post-list">
-    {% include 'core/partials/post_list.html' with page_obj=page_obj %}
-</div>
+  <h1 class="mb-4">Recent Posts</h1>
+  <div id="post-list">{% include 'core/partials/post_list.html' with page_obj=page_obj %}</div>
 {% endblock %}

@@ -1,14 +1,16 @@
 {% extends "core/base.html" %}
 {% block title %}Create Post - Forum{% endblock %}
 {% block content %}
-<div>
-  <h1>Create Post</h1>
-  {% if user.is_authenticated %}
-    <section id="post-form">
-      {% include 'core/partials/post_form.html' with form=form %}
-    </section>
-  {% else %}
-    <p>You must be logged in to create a post. <a href="{% url 'login' %}">Log in</a> or <a href="{% url 'register' %}">register</a> to continue.</p>
-  {% endif %}
-</div>
+  <div>
+    <h1>Create Post</h1>
+    {% if user.is_authenticated %}
+      <section id="post-form">
+        {% include 'core/partials/post_form.html' with form=form %}
+      </section>
+    {% else %}
+      <p>
+        You must be logged in to create a post. <a href="{% url 'login' %}">Log in</a> or <a href="{% url 'register' %}">register</a> to continue.
+      </p>
+    {% endif %}
+  </div>
 {% endblock %}

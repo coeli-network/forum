@@ -1,40 +1,35 @@
 <div class="post-list">
-    {% for post in page_obj %}
+  {% for post in page_obj %}
     <div class="post-item">
-        <div class="post-title">
-            {% if post.link %}
-                <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer">{{ post.title }}</a>
-            {% else %}
-                <a href="{% url 'post_detail' post.id %}">{{ post.title }}</a>
-            {% endif %}
-        </div>
-        <div class="post-meta">
-            <a href="{% url 'user_detail' post.author.id %}">{{ post.author.username }}</a> | 
-            {{ post.created_at|date:"M d, Y" }} | 
-            <a href="{% url 'post_detail' post.id %}">
-                {{ post.comment_count }} comment{{ post.comment_count|pluralize }}
-            </a>
-        </div>
+      <div class="post-title">
+        {% if post.link %}
+          <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer">{{ post.title }}</a>
+        {% else %}
+          <a href="{% url 'post_detail' post.id %}">{{ post.title }}</a>
+        {% endif %}
+      </div>
+      <div class="post-meta">
+        <a href="{% url 'user_detail' post.author.id %}">{{ post.author.username }}</a> |
+        {{ post.created_at|date:"M d, Y" }} |
+        <a href="{% url 'post_detail' post.id %}">{{ post.comment_count }} comment{{ post.comment_count|pluralize }}</a>
+      </div>
     </div>
-    {% endfor %}
+  {% endfor %}
 </div>
-
 <div class="pagination">
-    {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}"
-           hx-get="?page={{ page_obj.previous_page_number }}"
-           hx-target="#post-list"
-           hx-swap="innerHTML"
-           hx-push-url="true">Previous</a>
-    {% endif %}
-    
-    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-    
-    {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}"
-           hx-get="?page={{ page_obj.next_page_number }}"
-           hx-target="#post-list"
-           hx-swap="innerHTML"
-           hx-push-url="true">Next</a>
-    {% endif %}
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}"
+       hx-get="?page={{ page_obj.previous_page_number }}"
+       hx-target="#post-list"
+       hx-swap="innerHTML"
+       hx-push-url="true">Previous</a>
+  {% endif %}
+  <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}"
+       hx-get="?page={{ page_obj.next_page_number }}"
+       hx-target="#post-list"
+       hx-swap="innerHTML"
+       hx-push-url="true">Next</a>
+  {% endif %}
 </div>

@@ -1,5 +1,5 @@
 <form method="post" action="{% url 'post_create' %}">
-    {% csrf_token %}
-    {% include 'core/partials/form.html' with form=form %}
-    <button type="submit">Create Post</button>
+  {% csrf_token %}
+  {% include 'core/partials/form.html' with form=form %}
+  <button type="submit">Create Post</button>
 </form>
