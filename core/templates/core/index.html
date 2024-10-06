@@ -1,15 +1,6 @@
-{% extends "core/base.html" %} 
-{% block title %}Forum{% endblock %}
+{% extends 'core/base.html' %}
+
 {% block content %}
-<ol>
-  {% for post in posts %}
-  <li>
-    <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer">{{ post.title }}</a>
-    <br>
-    <small>
-      <a href="{% url 'post_detail' post.id %}">{{ post.comment_count }} comment{{ post.comment_count|pluralize }}</a>
-    </small>
-  </li>
-  {% endfor %}
-</ol>
+<h1 class="mb-4">Recent Posts</h1>
+{% include 'core/partials/post_list.html' with posts=posts %}
 {% endblock %}
