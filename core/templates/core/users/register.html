@@ -1,9 +1,11 @@
-{% extends "core/base.html" %} 
+{% extends "core/base.html" %}
 {% block title %}Register - Forum{% endblock %}
 {% block content %}
+<h1>Register</h1>
 <form method="post" action="{% url 'register' %}">
     {% csrf_token %}
-    {{ form }}
+    {% include 'core/partials/form.html' with form=form %}
     <button type="submit">Register</button>
 </form>
+<p class="mt-3">Already have an account? <a href="{% url 'login' %}">Login here</a></p>
 {% endblock %}
