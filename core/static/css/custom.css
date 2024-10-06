@@ -1,3 +1,12 @@
+/* Add these rules at the beginning of the file */
+html {
+    overflow-y: scroll;
+}
+
+body {
+    padding-right: calc(100vw - 100%);
+}
+
 :root {
     --font-family: 'Roboto Mono', monospace;
     --background-color: #ffffff;
@@ -34,6 +43,7 @@ body {
     color: var(--text-color);
     line-height: var(--line-height-base);
     font-size: var(--font-size-base);
+    padding-bottom: 2rem;
 }
 
 a {

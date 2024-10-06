@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
@@ -76,16 +77,29 @@ def post_create(request):
 
 def post_detail(request, id):
     post = Post.objects.get(id=id)
-    return render(request, "core/posts/post_detail.html", {"post": post})
+    comment_form = CommentForm()
+    return render(
+        request,
+        "core/posts/post_detail.html",
+        {"post": post, "comment_form": comment_form},
+    )
 
 
 # comments
 @login_required
 def comment_create(request, post_id):
     if request.method == "POST":
-        content = request.POST.get("content")
-        if content:
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            content = form.cleaned_data["content"]
             post = Post.objects.get(id=post_id)
             Comment.objects.create(post=post, author=request.user, content=content)
             return redirect("post_detail", id=post_id)
     return HttpResponseBadRequest("Invalid request")
+
+
+class CommentForm(forms.Form):
+    content = forms.CharField(
+        widget=forms.Textarea(attrs={"placeholder": "Write your comment here..."}),
+        label="",  # This removes the label
+    )
