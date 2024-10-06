@@ -1,0 +1,12 @@
+{% for comment in comments %}
+<div class="comment-item">
+    <div class="comment-content">
+        {{ comment.content|linebreaks }}
+    </div>
+    <div class="comment-meta">
+        {{ comment.author.username }} | {{ comment.created_at|date:"M d, Y" }}
+    </div>
+</div>
+{% empty %}
+<p>No comments yet.</p>
+{% endfor %}

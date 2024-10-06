@@ -1,26 +1,26 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<article class="mb-4">
-    <h1>{{ post.title }}</h1>
-    <p class="post-meta">Posted by {{ post.author.username }} on {{ post.created_at|date:"M d, Y" }}</p>
+<article class="mb-3">
+    <h1 class="mb-1">{{ post.title }}</h1>
+    <p class="post-meta mb-2">{{ post.author.username }} | {{ post.created_at|date:"M d, Y" }}</p>
     <div class="post-content">
         {{ post.content|linebreaks }}
     </div>
 </article>
 
 <section class="comment-list">
-    <h2>Comments</h2>
+    <h2 class="mb-2">Comments</h2>
     {% include 'core/partials/comment_list.html' with comments=post.comment_set.all %}
 </section>
 
 {% if user.is_authenticated %}
-<section class="mt-4">
-    <h3>Add a comment</h3>
+<section class="mt-3">
+    <h3 class="mb-2">Add a comment</h3>
     <form method="post" action="{% url 'comment_create' post.id %}">
         {% csrf_token %}
         {{ comment_form.as_p }}
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary btn-sm">Submit</button>
     </form>
 </section>
 {% endif %}
