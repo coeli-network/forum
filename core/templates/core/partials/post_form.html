@@ -1,8 +1,8 @@
 <form method="post" action="{% url 'post_create' %}">
     {% csrf_token %}
     {% for field in form %}
-        <div class="form-group">
-            {{ field.label_tag }}
+        <div class="form-group mb-3">
+            {{ field.label_tag|cut:':' }}
             {{ field }}
             {% if field.errors %}
                 <div class="error">{{ field.errors }}</div>
