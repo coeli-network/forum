@@ -4,30 +4,8 @@
 <div>
   <h1>Create Post</h1>
   {% if user.is_authenticated %}
-    <section>
-      <form method="post" action="{% url 'post_create' %}">
-        {% csrf_token %}
-        {% if form.non_field_errors %}
-          <div class="error">
-            {% for error in form.non_field_errors %}
-              {{ error }}
-            {% endfor %}
-          </div>
-        {% endif %}
-        {% for field in form %}
-          <p>
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}
-            {% if field.help_text %}
-              <small>{{ field.help_text|safe }}</small>
-            {% endif %}
-            {% for error in field.errors %}
-              <span class="error">{{ error }}</span>
-            {% endfor %}
-          </p>
-        {% endfor %}
-        <button type="submit">Create Post</button>
-      </form>
+    <section id="post-form">
+      {% include 'core/partials/post_form.html' with form=form %}
     </section>
   {% else %}
     <p>You must be logged in to create a post. <a href="{% url 'login' %}">Log in</a> or <a href="{% url 'register' %}">register</a> to continue.</p>

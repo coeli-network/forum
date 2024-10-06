@@ -1,13 +1,7 @@
-{% for comment in comments %}
-<div class="comment-item">
-    <div class="comment-content">
-        {{ comment.content|linebreaks }}
-    </div>
-    <div class="comment-meta">
-        <a href="{% url 'user_detail' comment.author.id %}">{{ comment.author.username }}</a> | 
-        {{ comment.created_at|date:"M d, Y" }}
-    </div>
-</div>
-{% empty %}
-<p>No comments yet.</p>
-{% endfor %}
+{% if comments %}
+    {% for comment in comments %}
+        {% include 'core/partials/comment_item.html' with comment=comment %}
+    {% endfor %}
+{% else %}
+    <p>No comments yet.</p>
+{% endif %}

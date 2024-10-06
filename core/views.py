@@ -3,20 +3,31 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
+from django.core.paginator import Paginator
 from django.db.models import Count
-from django.http import HttpResponseBadRequest, HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_GET, require_http_methods
 
 from .forms import PostCreateForm, UserRegisterForm
 from .models import Comment, Post, User
 
 
 # home
+@require_GET
 def index(request):
-    latest_posts = Post.objects.order_by("-created_at")[:100].annotate(
+    latest_posts = Post.objects.order_by("-created_at").annotate(
         comment_count=Count("comment")
     )
-    return render(request, "core/index.html", {"posts": latest_posts})
+    paginator = Paginator(latest_posts, 20)  # Show 20 posts per page
+    page_number = request.GET.get("page", 1)
+    page_obj = paginator.get_page(page_number)
+
+    context = {"page_obj": page_obj}
+
+    if request.htmx:
+        return render(request, "core/partials/post_list.html", context)
+    return render(request, "core/index.html", context)
 
 
 # users
@@ -62,6 +73,7 @@ def user_register(request):
 
 # posts
 @login_required
+@require_http_methods(["GET", "POST"])
 def post_create(request):
     if request.method == "POST":
         form = PostCreateForm(request.POST)
@@ -69,10 +81,12 @@ def post_create(request):
             post = form.save(commit=False)
             post.author = request.user
             post.save()
-            return redirect("index")
+            return redirect("post_detail", id=post.id)
     else:
         form = PostCreateForm()
-    return render(request, "core/posts/post_create.html", {"form": form})
+
+    context = {"form": form}
+    return render(request, "core/posts/post_create.html", context)
 
 
 def post_detail(request, id):
@@ -87,14 +101,22 @@ def post_detail(request, id):
 
 # comments
 @login_required
+@require_http_methods(["POST"])
 def comment_create(request, post_id):
-    if request.method == "POST":
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            content = form.cleaned_data["content"]
-            post = Post.objects.get(id=post_id)
-            Comment.objects.create(post=post, author=request.user, content=content)
-            return redirect("post_detail", id=post_id)
+    post = get_object_or_404(Post, id=post_id)
+    form = CommentForm(request.POST)
+    if form.is_valid():
+        comment = Comment.objects.create(
+            post=post, author=request.user, content=form.cleaned_data["content"]
+        )
+        if request.htmx:
+            comments = post.comment_set.all()
+            return render(
+                request, "core/partials/comment_list.html", {"comments": comments}
+            )
+        return redirect("post_detail", id=post_id)
+    if request.htmx:
+        return HttpResponse("Error: Invalid form submission", status=400)
     return HttpResponseBadRequest("Invalid request")
 
 

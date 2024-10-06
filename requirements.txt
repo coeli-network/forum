@@ -9,6 +9,7 @@ click==8.1.7
 cookiecutter==2.6.0
 Django==5.1.1
 django-browser-reload==1.15.0
+django-htmx==1.19.0
 idna==3.10
 isort==5.13.2
 Jinja2==3.1.4
