@@ -7,6 +7,11 @@
     --font-size-base: 14px;
     --font-size-small: 12px;
     --line-height-base: 1.4;
+    --navbar-link-color: #333333;
+    --navbar-link-hover-color: #0056b3;
+    --input-background: #ffffff;
+    --input-text-color: #333333;
+    --input-border-color: #cccccc;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,6 +20,11 @@
         --text-color: #f0f0f0;
         --link-color: #4da6ff;
         --border-color: #444444;
+        --navbar-link-color: #e0e0e0;
+        --navbar-link-hover-color: #ffffff;
+        --input-background: #2a2a2a;
+        --input-text-color: #f0f0f0;
+        --input-border-color: #444444;
     }
 }
 
@@ -41,6 +51,43 @@ a:hover {
     padding: 0.25rem 0.5rem;
 }
 
+/* Form styles */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="url"],
+textarea,
+select {
+    background-color: var(--input-background);
+    color: var(--input-text-color);
+    border: 1px solid var(--input-border-color);
+    padding: 0.25rem 0.5rem;
+    font-size: var(--font-size-base);
+    width: 100%;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="url"]:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--link-color);
+}
+
+/* Button styles */
+.btn-primary {
+    background-color: var(--link-color);
+    border-color: var(--link-color);
+    color: var(--background-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--navbar-link-hover-color);
+    border-color: var(--navbar-link-hover-color);
+}
+
 .navbar {
     border-bottom: 1px solid var(--border-color);
     padding: 0.25rem 0;
@@ -48,10 +95,25 @@ a:hover {
 
 .navbar-brand {
     font-size: 1.1rem;
+    color: var(--navbar-link-color);
+    padding-left: 0;
+}
+
+.navbar-brand:hover {
+    color: var(--navbar-link-hover-color);
 }
 
 .nav-link {
     padding: 0.25rem 0.5rem;
+    color: var(--navbar-link-color);
+}
+
+.nav-link:hover {
+    color: var(--navbar-link-hover-color);
+}
+
+.navbar-nav {
+    margin-left: auto;
 }
 
 .post-list {
