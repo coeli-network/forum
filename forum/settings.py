@@ -94,7 +94,7 @@ DATABASES = {
 
 # Custom user model
 
-# AUTH_USER_MODEL = "core.User"
+AUTH_USER_MODEL = "core.User"
 
 
 # Password validation

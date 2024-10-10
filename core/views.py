@@ -1,3 +1,5 @@
+import secrets
+
 from django import forms
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -5,8 +7,9 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.core.paginator import Paginator
 from django.db.models import Count
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_http_methods
 
 from .forms import PostCreateForm, UserRegisterForm
@@ -36,17 +39,44 @@ def user_detail(request, id):
     return render(request, "core/users/user_detail.html", {"user": user})
 
 
+@csrf_exempt
 def user_login(request):
-    if request.user.is_authenticated:
-        return redirect("index")
-    if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            login(request, form.get_user())
-            return redirect("index")
-    else:
-        form = AuthenticationForm()
-    return render(request, "core/users/login.html", {"form": form})
+    if request.method == "GET":
+        challenge = secrets.token_hex(16)
+        request.session["login_challenge"] = challenge
+        return render(request, "core/users/login.html", {"challenge": challenge})
+    elif request.method == "POST":
+        import json
+
+        data = json.loads(request.body)
+        urbit_id = data.get("urbitId")
+        public_key = data.get("publicKey")
+        signature = data.get("signature")
+        challenge = request.session.get("login_challenge")
+
+        # Verify the signature (you'll need to implement this function)
+        if verify_signature(public_key, challenge, signature):
+            try:
+                user = User.objects.get(id=int(urbit_id, 32))
+                if user.public_key == public_key:
+                    login(request, user)
+                    return JsonResponse({"success": True, "redirect": "/"})
+                else:
+                    return JsonResponse(
+                        {"success": False, "error": "Invalid public key"}
+                    )
+            except User.DoesNotExist:
+                return JsonResponse({"success": False, "error": "User not found"})
+        else:
+            return JsonResponse({"success": False, "error": "Invalid signature"})
+
+    return JsonResponse({"success": False, "error": "Invalid request method"})
+
+
+def verify_signature(public_key, message, signature):
+    # Implement signature verification here
+    # This is a placeholder and should be replaced with actual verification logic
+    return True
 
 
 def user_logout(request):
