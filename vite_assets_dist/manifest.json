@@ -1,0 +1,8 @@
+{
+  "js/main.js": {
+    "file": "bundle.js",
+    "name": "home",
+    "src": "js/main.js",
+    "isEntry": true
+  }
+}

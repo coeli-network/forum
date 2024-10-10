@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     # api
     # 'api.apps.ApiConfig',
     # third-party
+    # "django_vite",
     # built-in
     "django.contrib.admin",
     "django.contrib.auth",
@@ -132,6 +133,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "vite_assets_dist"]
+
+# JavaScript Bundling
+# https://github.com/MrBin99/django-vite
+
+# DJANGO_VITE = {"default": {"dev_mode": False, "dev_server_port": "5173"}}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

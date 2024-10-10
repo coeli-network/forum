@@ -1,5 +1,8 @@
+import os
 import secrets
 
+import urbitob as ob
+import web3
 from django import forms
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -11,6 +14,8 @@ from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_http_methods
+from dotenv import load_dotenv
+from eth_account.messages import HexBytes, encode_defunct
 
 from .forms import PostCreateForm, UserRegisterForm
 from .models import Comment, Post, User
@@ -50,33 +55,101 @@ def user_login(request):
 
         data = json.loads(request.body)
         urbit_id = data.get("urbitId")
-        public_key = data.get("publicKey")
+        point = ob.patp_to_num(urbit_id)
         signature = data.get("signature")
         challenge = request.session.get("login_challenge")
 
         # Verify the signature (you'll need to implement this function)
-        if verify_signature(public_key, challenge, signature):
+        public_key = verify_signature(point, challenge, signature)
+        if public_key is not None:
             try:
-                user = User.objects.get(id=int(urbit_id, 32))
-                if user.public_key == public_key:
-                    login(request, user)
-                    return JsonResponse({"success": True, "redirect": "/"})
-                else:
-                    return JsonResponse(
-                        {"success": False, "error": "Invalid public key"}
-                    )
+                user = User.objects.get(id=point)
+                print(user)
+                login(request, user)
+                return JsonResponse({"success": True, "redirectUrl": "/"})
             except User.DoesNotExist:
-                return JsonResponse({"success": False, "error": "User not found"})
+                user = User.objects.create(
+                    id=point, public_key=public_key, username=urbit_id
+                )
+                login(request, user)
+                return JsonResponse({"success": True, "redirectUrl": "/"})
+            except Exception as e:
+                print(e)
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "error": "Problem",
+                        "redirectUrl": "/login",
+                    }
+                )
         else:
-            return JsonResponse({"success": False, "error": "Invalid signature"})
+            return JsonResponse(
+                {
+                    "success": False,
+                    "error": "Invalid signature",
+                    "redirectUrl": "/login",
+                }
+            )
 
     return JsonResponse({"success": False, "error": "Invalid request method"})
 
 
-def verify_signature(public_key, message, signature):
-    # Implement signature verification here
-    # This is a placeholder and should be replaced with actual verification logic
-    return True
+def verify_signature(point, challenge, signature):
+    # Initialize web3 provider
+    load_dotenv()
+    network = os.environ["ETHEREUM_NETWORK"]
+    api_key = os.environ["INFURA_API_KEY"]
+    version = os.environ["INFURA_API_VERSION"]
+    infura_url = f"https://{network}.infura.io/{version}/{api_key}"
+    w3 = web3.Web3(web3.Web3.HTTPProvider(infura_url))
+
+    # Lookup point's current address onchain
+    owner_address = get_point_owner(point)
+    print(f"owner address: {owner_address}")
+
+    # Verify signature's recovered public key is same as current address
+    message = encode_defunct(text=challenge)
+    recovered_address = w3.eth.account.recover_message(
+        message, signature=HexBytes(signature)
+    )
+    print(f"recovered address: {recovered_address}")
+
+    if owner_address == recovered_address:
+        return owner_address
+    return None
+
+
+def get_point_owner(point):
+    # Initialize web3 provider
+    load_dotenv()
+    network = os.environ["ETHEREUM_NETWORK"]
+    api_key = os.environ["INFURA_API_KEY"]
+    version = os.environ["INFURA_API_VERSION"]
+    infura_url = f"https://{network}.infura.io/{version}/{api_key}"
+    w3 = web3.Web3(web3.Web3.HTTPProvider(infura_url))
+
+    abi = [
+        {
+            "constant": True,
+            "inputs": [{"name": "_point", "type": "uint32"}],
+            "name": "getOwner",
+            "outputs": [{"name": "owner", "type": "address"}],
+            "payable": False,
+            "stateMutability": "view",
+            "type": "function",
+        }
+    ]
+    azimuth_address = os.environ["AZIMUTH_ADDRESS"]
+    azimuth = w3.eth.contract(azimuth_address, abi=abi)
+
+    try:
+        owner_address = azimuth.functions.getOwner(point).call()
+        if owner_address == 0x0:
+            print("Error: owner address is 0x0!")
+            raise Exception
+        return owner_address
+    except Exception as e:
+        print(f"Error fetching owner: {str(e)}")
 
 
 def user_logout(request):
